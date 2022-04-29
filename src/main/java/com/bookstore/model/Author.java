@@ -16,8 +16,15 @@ public class Author extends AuditModel{
     @Column(name = "last_name")  private String lastName;
     @Column(name = "birth_date") private Date birthDate;
 
-    @OneToMany(mappedBy = "author",
-               fetch = FetchType.LAZY,
-               cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "author_books",
+            joinColumns = @JoinColumn(
+                    name = "author_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(
+                    name = "book_id", referencedColumnName = "id"))
+
     @Column(name = "book_list") private List<Book> bookList;
+
+
 }

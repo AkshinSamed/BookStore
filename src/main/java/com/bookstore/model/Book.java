@@ -8,9 +8,10 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
-@Table(name = "books")
+@Table(name = "book")
 @NoArgsConstructor
 @Getter
 @Setter
@@ -27,11 +28,14 @@ public class Book extends AuditModel{
     @Column(name = "brief_content")
     private String briefContent;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "author_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonIgnore
-    private Author author;
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "author_books",
+            joinColumns = @JoinColumn(
+                    name = "book_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(
+                    name = "author_id", referencedColumnName = "id"))
+    @Column(name = "author_list") private List<Author> authorList;
 
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -41,14 +45,14 @@ public class Book extends AuditModel{
     private User user;
 
     public Book(String title, String genre, float cost,
-                int yearPublished, String briefContent, Author author) {
+                int yearPublished, String briefContent, List<Author> authorList) {
         super();
         this.title = title;
         this.genre = genre;
         this.cost = cost;
         this.yearPublished = yearPublished;
         this.briefContent = briefContent;
-        this.author = author;
+        this.authorList = authorList;
     }
 
 }
